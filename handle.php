@@ -69,11 +69,11 @@ function getCreateImageInfo($fileName) {
  * @param Int $imageSize 文件大小
  * @return array array[0] = 图片资源, array[1] = width ,array[2]=height
  */
-function createSmallImage($fileName, $imagewidth = 400,$imageHeight=600) {
+function createSmallImage($fileName, $imagewidth =254 ,$imageHeight=380) {
     list($image, , $width ,$height) = getCreateImageInfo($fileName);
     if ($width != $imagewidth && $height != $imageHeight) {    //判断图片是否为指定大小的正方形图片
         //重新设定图片大小
-        $tmpImage = imagecreatetruecolor(400, 600);
+        $tmpImage = imagecreatetruecolor(254, 380);
         imagecopyresized($tmpImage, $image, 0, 0, 0, 0, $imagewidth,$imageHeight, $width, $height);
         return array($tmpImage, $imagewidth,$imageHeight);
     } else {
@@ -122,7 +122,7 @@ function createMergeImage($baseImage,$avatarImage,$str,$num) {
     ob_clean();    //清除缓冲区内容，防止无法输出图像
     list($avatar,$radius,$radiusH) = createSmallImage($avatarImage);
     list($image,$imageType) = getCreateImageInfo($baseImage);
-    imagecopymerge($image,$avatar,170,250,0,0,$radius,$radiusH,100);
+    imagecopymerge($image,$avatar,114,165,0,0,$radius,$radiusH,100);
     
 
 
@@ -130,18 +130,25 @@ $black = imagecolorallocate($image,0x00,0x00,0x00);
 
 //imagestring($im,2,50,160,"gonghe",$black);
 //$text = iconv("GB2312", "UTF-8", "回忆经典");
-imagettftext($image,90,0,1060,620,$black,"./simhei.ttf",$str); //字体设置部分linux和windows的路径可能不同
-imagettftext($image,92,0,1060,850,$black,"./simhei.ttf",$num); //字体设置部分linux和windows的路径可能不同
+imagettftext($image,53,0,660,380,$black,"./simhei.ttf",$str); //字体设置部分linux和windows的路径可能不同
+imagettftext($image,60,0,660,500,$black,"./simhei.ttf",$num); //字体设置部分linux和windows的路径可能不同
 
     $imageOut = 'image'.$imageType;    //根据图片类型不同来拼接图片输出函数
     $imagefile='./out/'.$num.".".$imageType;
-    header('Content-Type: image/'.$imageType);    //根据图片类型不同来拼接头信息
+    //header('content-type:text/html;charset=GBK');    //根据图片类型不同来拼接头信息
     header("Content-Disposition", "attachment; filename=" + fileName);
     header("Pragma", "No-cache");
 	header("Cache-Control", "No-cache");
 	header("Expires", 0);
-    $imageOut($image);    //输出图片
+   // $imageOut($image);    //输出图片
     $imageOut($image,$imagefile);
+ $contect =  substr($_SERVER['REQUEST_URI'],0,strripos($_SERVER['REQUEST_URI'],"/"));
+     //$url='http://'.$_SERVER['HTTP_HOST'].$contect."/download.php?filename=".'./out/'.$num.".".$imageType;
+    // $url='http://'.$_SERVER['HTTP_HOST'].$contect."/index.php?filename='".'./out/'.$num.".".$imageType."'";
+      $url='http://'.$_SERVER['HTTP_HOST'].$contect."/index.php?filename=".$num.".".$imageType;
+     
+     //&imageUrl='http://'.$_SERVER['HTTP_HOST'].$contect.'/out/'.$num.".".$imageType;
+    Header("Location: $url"); 
     imagedestroy($image);    //销毁资源
 }
 
